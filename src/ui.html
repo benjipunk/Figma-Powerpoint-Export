@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --bg: var(--figma-color-bg, #fff);
+    --bg2: var(--figma-color-bg-secondary, #f5f5f5);
+    --bg3: var(--figma-color-bg-tertiary, #e6e6e6);
+    --fg: var(--figma-color-text, #1e1e1e);
+    --fg2: var(--figma-color-text-secondary, #6b6b6b);
+    --border: var(--figma-color-border, #e6e6e6);
+    --blue: #0d6efd;
+    --blue-hover: #0b5ed7;
+    --danger: var(--figma-color-text-danger, #f24822);
+    --success: var(--figma-color-text-success, #14ae5c);
+    --warn: var(--figma-color-text-warning, #a86a00);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font: 12px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; }
+  body { display: flex; flex-direction: column; }
+  main { flex: 1; overflow: auto; padding: 16px 20px 0; }
+  footer { padding: 12px 20px 16px; border-top: 1px solid var(--border); background: var(--bg); }
+
+  header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  header .titles { min-width: 0; }
+  header h1 { font-size: 13px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .muted { color: var(--fg2); }
+
+  section { margin: 0 0 16px; }
+  section > h2 { font-size: 11px; font-weight: 600; margin: 0 0 6px; color: var(--fg2); text-transform: uppercase; letter-spacing: .4px; }
+  .row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+  .row label { flex: 1; display: flex; align-items: center; gap: 6px; }
+  select { font: inherit; color: var(--fg); background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 4px 6px; }
+  input[type=checkbox], input[type=radio] { margin: 0; }
+  .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; background: var(--bg3); font-size: 10px; }
+  .pill.warn { color: var(--warn); }
+  .pill.ok { color: var(--success); }
+
+  details { border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; }
+  details summary { cursor: pointer; padding: 8px 0; font-weight: 600; color: var(--fg2); list-style: none; display: flex; align-items: center; gap: 6px; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▸"; font-size: 10px; transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details .body { padding: 0 0 8px; }
+
+  button { font: inherit; border: 1px solid var(--border); background: var(--bg2); color: var(--fg); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+  button.primary { width: 100%; height: 48px; font-size: 15px; font-weight: 700; color: #fff; background: var(--blue); border-color: transparent; border-radius: 10px; letter-spacing: .2px; }
+  button.primary:hover:not(:disabled) { background: var(--blue-hover); }
+  button:disabled { opacity: .5; cursor: default; }
+  .actions { display: flex; flex-direction: column; gap: 8px; }
+
+  .progress { height: 6px; border-radius: 3px; background: var(--bg3); overflow: hidden; margin: 8px 0; }
+  .progress > div { height: 100%; width: 0; background: var(--blue); transition: width .15s; }
+  #status { min-height: 16px; }
+  #status.error { color: var(--danger); }
+
+  .video { display: grid; grid-template-columns: 96px 1fr; gap: 10px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; align-items: start; }
+  .video img, .video .thumb { width: 96px; height: 54px; object-fit: cover; border-radius: 3px; background: var(--bg3); }
+  .video .title { font-weight: 600; }
+  .video .file { margin-top: 4px; }
+  .video input[type=file] { width: 100%; font-size: 10px; }
+  .video button.small { padding: 3px 8px; font-size: 10px; }
+  .video [hidden] { display: none; }
+  .hint { font-size: 10.5px; color: var(--fg2); margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="titles">
+      <h1 id="deckName">Loading…</h1>
+      <div class="muted" id="deckMeta"></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Slides</h2>
+    <div class="row"><label><input type="radio" name="scope" value="all" checked> All slides</label></div>
+    <div class="row"><label><input type="radio" name="scope" value="selected" id="scopeSelected"> Selected slides only <span class="pill" id="selCount">0</span></label></div>
+    <div class="row"><label><input type="checkbox" id="includeSkipped"> Include hidden slides</label></div>
+  </section>
+
+  <section id="videoSection" hidden>
+    <h2>Repair videos <span class="pill warn" id="videoCount"></span></h2>
+    <div class="hint">Figma can't hand plugins the video file, so drop in the original video for each slide below.
+      It will play at its original position on top of the exported slide.</div>
+    <div id="videoList"></div>
+  </section>
+
+  <section>
+    <details>
+      <summary>Advanced</summary>
+      <div class="body">
+        <div class="row">
+          <label for="height">Resolution</label>
+          <select id="height">
+            <option value="1080">1080p (1920 × 1080)</option>
+            <option value="1440" selected>1440p (2560 × 1440)</option>
+            <option value="2160">2160p (3840 × 2160)</option>
+          </select>
+        </div>
+        <div class="row"><label><input type="checkbox" id="includeNotes" checked> Include speaker notes</label></div>
+        <div class="hint" style="margin-top:8px">Provided as is, without warranty. This plugin only reads your deck and never changes it. Apache 2.0 licensed.</div>
+      </div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <div id="status" class="muted"></div>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="actions">
+    <button class="primary" id="exportBtn" disabled>Export to PowerPoint</button>
+  </div>
+</footer>
+
+<script>/*BUILD_INJECT_SCRIPT*/</script>
+</body>
+</html>

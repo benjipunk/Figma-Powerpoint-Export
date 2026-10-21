@@ -1,0 +1,8 @@
+Figma PowerPoint Export
+Copyright 2026 Jon Cheney
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+This software is provided "AS IS", without warranty of any kind. The author is not
+liable for any loss, damage, or broken presentations arising from its use. Always keep
+your original Figma deck; the plugin only reads it and never modifies it.

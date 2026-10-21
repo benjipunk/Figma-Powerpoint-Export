@@ -1,0 +1,14 @@
+{
+  "name": "Figma Powerpoint Export",
+  "id": "1690098893255395336",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": ["slides"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

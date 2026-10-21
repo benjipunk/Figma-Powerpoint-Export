@@ -1,0 +1,11 @@
+# Node
+*.log
+*.log.*
+node_modules
+
+out/
+dist/
+code.js
+
+# Built plugin for install.sh, kept in git on purpose
+!release/code.js
